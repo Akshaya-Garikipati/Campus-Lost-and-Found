@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InSearch — Campus Lost and Found Portal | Sai University</title>
+  <meta name="description" content="InSearch: Official campus lost and found community portal for Sai University students, faculty, and administrative staff." />
+
+  <!-- Google Fonts: Bricolage Grotesque, Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- Navigation Bar: Warm, Restrained, Student Community Navigation -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="#" class="brand-wrapper" onclick="App.navigateTo('browse'); return false;">
+        <div class="brand-logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <path d="M11 8v6"></path>
+            <path d="M8 11h6"></path>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title">InSearch</span>
+          <span class="brand-subtitle">Sai University</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Menu -->
+      <nav class="nav-menu">
+        <a href="#browse" class="nav-link active" data-view="browse">Browse Items</a>
+        <a href="#report" class="nav-link" data-view="report">Report an Item</a>
+        <a href="#dashboard" class="nav-link" id="nav-tab-dashboard" data-view="dashboard">My Dashboard</a>
+        <a href="#admin" class="nav-link hidden" id="nav-tab-admin" data-view="admin">Admin Console</a>
+      </nav>
+
+      <!-- Nav Actions (Primary CTA, Light/Dark Toggle, Notifications & Profile) -->
+      <div class="nav-actions">
+        <!-- Prominent Primary Action Button -->
+        <button type="button" class="btn btn-primary btn-sm nav-cta-btn" onclick="App.navigateTo('report')">
+          + Report Found Item
+        </button>
+
+        <!-- Light / Dark Mode Toggle Pill -->
+        <div class="mode-toggle-pill" onclick="Theme.toggleMode()" role="button" tabindex="0" title="Toggle Light / Dark Mode" aria-label="Toggle visual theme">
+          <span class="mode-opt mode-light" id="opt-light">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            LIGHT
+          </span>
+          <span class="mode-opt mode-dark active" id="opt-dark">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            DARK
+          </span>
+        </div>
+
+        <!-- Notifications Bell -->
+        <button class="btn-icon" id="btn-notifications" title="Notifications" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span class="badge-counter hidden" id="notif-badge">0</span>
+        </button>
+
+        <!-- Logged In User State -->
+        <div id="auth-logged-in" class="d-flex align-items-center gap-2">
+          <div class="user-avatar-trigger" onclick="App.navigateTo('dashboard')" title="My Profile &amp; Dashboard" role="button" tabindex="0">
+            <img id="nav-user-avatar" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80" alt="User Avatar" class="user-avatar-circle" />
+          </div>
+          <button class="btn-logout-icon" onclick="Auth.logout(); App.showToast('Logged out successfully', 'info');" title="Sign out" aria-label="Sign out">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+
+        <!-- Logged Out State -->
+        <div id="auth-logged-out" class="hidden">
+          <button class="btn btn-outline btn-sm" onclick="App.openAuthModal('login')">
+            Sign In
+          </button>
+        </div>
+
+        <!-- Mobile Menu Hamburger -->
+        <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notifications Drawer -->
+  <aside id="notifications-drawer" class="notifications-drawer" aria-label="Notifications panel">
+    <div class="notif-header">
+      <span class="fw-bold text-sm">Notifications</span>
+      <button class="btn btn-xs btn-outline" onclick="App.markAllNotifsRead()">Mark All Read</button>
+    </div>
+    <div class="notif-list" id="notifications-container">
+      <!-- Populated dynamically via JS -->
+    </div>
+  </aside>
+
+  <!-- ==========================================================================
+       VIEW 1: Browse Items & Catalog (Warm Student Community Home)
+       ========================================================================== -->
+  <main id="view-browse">
+    <!-- Hero Section: Architectural Blueprint Grid + Atmospheric Mesh + 3D Card -->
+    <section class="hero-section">
+      <div class="container hero-container">
+        
+        <!-- Left Column: Clear Human Headline & Balanced Actions -->
+        <div class="hero-content">
+          <div class="hero-kicker">
+            <span class="badge-dot"></span>
+            <span>CAMPUS ARCHIVE // SAI UNIVERSITY</span>
+          </div>
+
+          <h1 class="hero-title">
+            Lost Something on Campus? <br />
+            <span class="hero-title-highlight">We'll help you find it.</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            InSearch connects Sai University students, faculty, and administrative staff to report found belongings, discover lost items, and coordinate physical custody.
+          </p>
+
+          <div class="hero-actions">
+            <button type="button" class="btn btn-primary btn-lg" onclick="App.navigateTo('report')">
+              + Report an Item
+            </button>
+            <button type="button" class="btn btn-outline btn-lg" onclick="document.getElementById('catalog-search-area').scrollIntoView({ behavior: 'smooth' })">
+              Browse Directory
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="App.handleQuickLogin('admin', 'admin')">
+              ⚡ Demo: Admin Mode
+            </button>
+          </div>
+
+          <!-- Hero Metrics Strip — Architectural Hairline Box -->
+          <div class="hero-stats-banner">
+            <div class="hero-stat-item">
+              <span class="hero-stat-value">100%</span>
+              <span class="hero-stat-label">Verified Students</span>
+            </div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-value">&lt; 24h</span>
+              <span class="hero-stat-label">Average Match Time</span>
+            </div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-value">8 Campus Hubs</span>
+              <span class="hero-stat-label">Custody Lockboxes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: 3D Architectural Showcase Card -->
+        <div class="hero-visual">
+          <div class="hero-image-card">
+            <img src="sai-uni-img.jpg" alt="Sai University Campus Architecture" class="hero-main-img" />
+            <div class="hero-img-gradient"></div>
+            <div class="hero-floating-card hero-image-stamp">
+              <span class="stamp-dot"></span>
+              <span class="stamp-text">CENTRAL CUSTODY REPOSITORY // SAI UNIVERSITY // DESK G-04</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Infinite Campus Activity Marquee (Edge-Masked Smooth Fade) -->
+    <div class="live-ticker-bar">
+      <div class="ticker-track">
+        <div class="ticker-content">
+          <span class="ticker-item"><span class="counter-pulse"></span> <strong>18 RECOVERIES</strong> THIS WEEK</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>REUNITED:</strong> CASIO FX-991CW [LIBRARY DESK]</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>PHYSICAL CUSTODY:</strong> SECURITY DESK G-04</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>CLAIM CLEARED:</strong> AIRPODS PRO (2ND GEN)</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>PAIYANUR CAMPUS:</strong> SAI UNIVERSITY</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>MATCH TIME:</strong> &lt; 24H AVERAGE</span>
+          <span class="ticker-sep">&bull;</span>
+        </div>
+        <div class="ticker-content" aria-hidden="true">
+          <span class="ticker-item"><span class="counter-pulse"></span> <strong>18 RECOVERIES</strong> THIS WEEK</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>REUNITED:</strong> CASIO FX-991CW [LIBRARY DESK]</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>PHYSICAL CUSTODY:</strong> SECURITY DESK G-04</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>CLAIM CLEARED:</strong> AIRPODS PRO (2ND GEN)</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>PAIYANUR CAMPUS:</strong> SAI UNIVERSITY</span>
+          <span class="ticker-sep">&bull;</span>
+          <span class="ticker-item"><strong>MATCH TIME:</strong> &lt; 24H AVERAGE</span>
+          <span class="ticker-sep">&bull;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catalog Section: Clean Campus Lost & Found Directory -->
+    <section class="container catalog-section" id="catalog-search-area">
+      <div class="catalog-header-bar">
+        <div class="catalog-title-group">
+          <div class="catalog-sub-badge">
+            <span class="sub-badge-dot"></span>
+            <span>Campus Lost &amp; Found Directory</span>
+          </div>
+          <h2 class="catalog-headline">Recently Reported Items</h2>
+          <p class="catalog-desc">Filter by location, category, or search keywords to find items reported across Sai University.</p>
+        </div>
+        <div class="catalog-header-actions">
+          <button type="button" class="btn btn-primary btn-sm" onclick="App.navigateTo('report')">
+            + Report Found Item
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar-container">
+        <!-- Search Input -->
+        <div class="search-input-wrapper">
+          <svg class="search-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-input" class="search-field" placeholder="Search by item name, category, or building (e.g., 'MacBook', 'Library', 'Calculator', 'Keys')..." aria-label="Search items" />
+        </div>
+
+        <div class="filters-row">
+          <!-- Status Filter Tabs -->
+          <div class="type-pills-group" role="tablist" aria-label="Filter by item status">
+            <button type="button" class="type-pill active" data-type="all">All Items</button>
+            <button type="button" class="type-pill" data-type="found">Found Items</button>
+            <button type="button" class="type-pill" data-type="lost">Lost Items</button>
+            <button type="button" class="type-pill" data-type="recovered">Reunited</button>
+          </div>
+
+          <!-- Dropdowns -->
+          <div class="dropdown-filters-group">
+            <select id="filter-category" class="filter-select" aria-label="Filter by category">
+              <option value="all">All Categories</option>
+            </select>
+
+            <select id="filter-location" class="filter-select" aria-label="Filter by location">
+              <option value="all">All Campus Locations</option>
+            </select>
+
+            <select id="sort-by" class="filter-select" aria-label="Sort items">
+              <option value="newest">Sort: Newest First</option>
+              <option value="oldest">Sort: Oldest First</option>
+              <option value="name-asc">Sort: Name (A-Z)</option>
+              <option value="name-desc">Sort: Name (Z-A)</option>
+            </select>
+
+            <button type="button" class="btn btn-sm btn-outline" id="btn-reset-filters" title="Reset all filters">
+              Reset Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Count Bar -->
+      <div class="items-status-bar">
+        <div class="items-counter-block">
+          <span class="counter-pulse"></span>
+          <span class="items-counter" id="items-count-badge">Loading campus items...</span>
+        </div>
+      </div>
+
+      <!-- Items Grid -->
+      <div class="items-grid" id="items-grid">
+        <!-- Populated dynamically via Application.renderItems() -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       VIEW 2: Report an Item Form (Clean, Required Photo Validation)
+       ========================================================================== -->
+  <section id="view-report" class="report-section hidden">
+    <div class="container">
+      <div class="form-card">
+        <div class="form-header">
+          <div class="terminal-meta-tag">
+            <span class="terminal-dot"></span>
+            <span>Sai University &bull; Lost &amp; Found Intake</span>
+          </div>
+          <h2 class="form-card-title">Report an Item</h2>
+          <p class="form-card-subtitle">
+            Did you find a misplaced item on campus, or did you lose something? Fill out the details below. A photograph is required to help verify ownership.
+          </p>
+        </div>
+
+        <!-- Duplicate Warning Banner -->
+        <div id="duplicate-warning-banner" class="duplicate-warning-banner hidden">
+          <div class="duplicate-warning-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span>Similar Items Found in Campus Database</span>
+          </div>
+          <p class="duplicate-warning-desc">
+            We found matching reports that might belong to the same incident. Check below before submitting a new record:
+          </p>
+          <div class="duplicate-matches-list" id="duplicate-matches-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <form id="report-form" class="clean-form">
+          <!-- Listing Type: Found vs Lost -->
+          <div class="form-group">
+            <label class="form-label">Report Type *</label>
+            <div class="type-radio-group">
+              <label class="type-radio-card found-radio">
+                <input type="radio" name="report-type" value="found" checked />
+                <div class="radio-card-body">
+                  <div class="radio-title-row">
+                    <span class="badge badge-found text-xs">FOUND ITEM</span>
+                    <span class="radio-title">I Found an Item on Campus</span>
+                  </div>
+                  <span class="radio-sub">I discovered a misplaced item and want to help reunite it with its owner</span>
+                </div>
+              </label>
+
+              <label class="type-radio-card lost-radio">
+                <input type="radio" name="report-type" value="lost" />
+                <div class="radio-card-body">
+                  <div class="radio-title-row">
+                    <span class="badge badge-lost text-xs">LOST ITEM</span>
+                    <span class="radio-title">I Lost an Item on Campus</span>
+                  </div>
+                  <span class="radio-sub">I misplaced a personal belonging and want peers &amp; security to look out for it</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Item Title -->
+          <div class="form-group">
+            <label class="form-label" for="report-title">Item Name &amp; Model *</label>
+            <input type="text" id="report-title" class="form-control" placeholder="e.g. Blue HydroFlask Bottle, Apple AirPods Pro, Student ID Card" required />
+          </div>
+
+          <!-- Category and Location -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="report-category">Category *</label>
+              <select id="report-category" class="form-control" required>
+                <!-- Populated via JS -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="report-location">Campus Building / Area *</label>
+              <select id="report-location" class="form-control" required>
+                <!-- Populated via JS -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Specific Spot & Date -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="report-specific-loc">Specific Spot or Room (Optional)</label>
+              <input type="text" id="report-specific-loc" class="form-control" placeholder="e.g. 2nd Floor Quiet Study Table 4, Seminar Hall 3, Cafeteria counter" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="report-date">Date Found / Lost *</label>
+              <input type="date" id="report-date" class="form-control" required />
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label class="form-label" for="report-description">Description &amp; Identifying Details *</label>
+            <textarea id="report-description" class="form-control" rows="3" placeholder="Describe color, scratches, stickers, brand markings, or condition so students can identify it..." required></textarea>
+          </div>
+
+          <!-- Compulsory Image Upload -->
+          <div class="form-group">
+            <label class="form-label">Item Photograph * <span class="text-xs text-muted">(Required for all submissions)</span></label>
+            <div class="image-upload-dropzone" id="image-dropzone">
+              <input type="file" id="report-image-input" class="image-upload-input" accept="image/*" />
+              <div id="upload-placeholder" class="upload-placeholder-content">
+                <div class="upload-icon-circle">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                </div>
+                <div class="upload-primary-text">Click to choose a photo or drag image here</div>
+                <div class="upload-secondary-text">Compulsory requirement &bull; JPG, PNG or WebP up to 5MB</div>
+              </div>
+              <img id="report-image-preview" src="" alt="Item photo preview" class="image-preview-thumb hidden" />
+              <button type="button" id="btn-remove-image" class="btn btn-xs btn-outline btn-remove-photo hidden">Remove Photo</button>
+            </div>
+            <!-- Visible Inline Validation Error Message -->
+            <div id="report-image-error" class="dropzone-error-text hidden" role="alert">
+              A photograph of the item is required before submitting so the owner or campus security can verify it.
+            </div>
+          </div>
+
+          <!-- Physical Handover Notice -->
+          <div class="handover-info-callout">
+            <div class="callout-icon">📍</div>
+            <div class="callout-text">
+              <strong>Custody Handover Recommendation:</strong>
+              <span>For items found on campus, please bring the physical item to <strong>Central Security Pavilion Desk G-04</strong> (Ground Floor) or handover to the Library desk so the claimant can pick it up securely with student ID verification.</span>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions-row">
+            <button type="button" class="btn btn-outline" onclick="App.navigateTo('browse')">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary btn-lg">
+              Submit Report
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       VIEW 3: Student Personal Dashboard
+       ========================================================================== -->
+  <section id="view-dashboard" class="dashboard-section hidden">
+    <div class="container">
+      <!-- User Profile Header -->
+      <div class="dash-user-card">
+        <div class="dossier-profile-left">
+          <div class="dossier-avatar-wrapper">
+            <img id="dash-user-avatar" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="dossier-avatar-img" />
+          </div>
+          <div class="dossier-identity-info">
+            <div class="dossier-meta-row">
+              <span class="badge badge-recovered text-xs">&bull; Verified Student</span>
+              <span id="dash-user-id" class="dossier-id-chip">SAI2023CSE042</span>
+            </div>
+            <h2 id="dash-user-name" class="dossier-name">Akshaya Ramesh</h2>
+            <div id="dash-user-dept" class="dossier-dept-label">School of Computing &amp; Data Science &bull; Sai University</div>
+          </div>
+        </div>
+        <div class="dossier-actions-group">
+          <button type="button" class="btn btn-primary btn-sm" onclick="App.navigateTo('report')">
+            + Report Found Item
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="App.handleQuickLogin('admin', 'admin')">
+            ⚡ Demo: Admin Mode
+          </button>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid: My Reported Items & My Claims -->
+      <div class="dash-grid">
+        <!-- Column 1: My Reported Items -->
+        <div class="dash-column">
+          <div class="dash-col-header">
+            <div>
+              <span class="text-xs text-muted">My Postings</span>
+              <h3 class="col-title">Reported Items</h3>
+            </div>
+            <span class="counter-chip" id="dash-reported-count">0 items</span>
+          </div>
+          <div id="dash-my-items-list" class="dash-cards-stream">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <!-- Column 2: My Claims -->
+        <div class="dash-column">
+          <div class="dash-col-header">
+            <div>
+              <span class="text-xs text-muted">Claim Status</span>
+              <h3 class="col-title">Filed Claims</h3>
+            </div>
+            <span class="counter-chip" id="dash-claims-count">0 claims</span>
+          </div>
+          <div id="dash-my-claims-list" class="dash-cards-stream">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       VIEW 4: Admin Console (Campus Security Command)
+       ========================================================================== -->
+  <section id="view-admin" class="admin-section hidden">
+    <div class="container">
+      <!-- Campus Command Banner -->
+      <div class="admin-canopy-banner" style="background-image: url('sai-uni-img.jpg');">
+        <div class="admin-canopy-overlay"></div>
+        <div class="admin-canopy-content">
+          <div class="canopy-top-meta">
+            <span class="canopy-badge">Sai University Security &amp; Operations</span>
+            <span class="canopy-coord">Paiyanur Campus &bull; Central Desk G-04</span>
+          </div>
+          <div class="admin-canopy-bottom">
+            <div class="admin-header-title">
+              <h2 class="admin-headline">Campus Security &amp; Administration Console</h2>
+              <p>Physical custody registry, claim verifications &amp; incident management</p>
+            </div>
+            <div class="canopy-actions">
+              <button type="button" class="btn btn-outline btn-sm" onclick="App.handleQuickLogin('student', 'dashboard')">
+                Switch to Student View
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="State.resetToDefaults(); App.showToast('Sample data reset to original defaults', 'success');">
+                Reset Sample Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="admin-content-area">
+        <!-- KPI Cards Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="metric-top-row">
+              <span class="kpi-label">Registered Users</span>
+              <div class="kpi-icon-wrapper">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-value" id="kpi-total-users">0</span>
+              <span class="metric-sub-tag">Students &amp; Staff</span>
+            </div>
+          </div>
+
+          <div class="kpi-card" data-type="lost">
+            <div class="metric-top-row">
+              <span class="kpi-label">Active Lost Items</span>
+              <div class="kpi-icon-wrapper">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-value" id="kpi-total-lost">0</span>
+              <span class="metric-sub-tag">Reported Lost</span>
+            </div>
+          </div>
+
+          <div class="kpi-card" data-type="found">
+            <div class="metric-top-row">
+              <span class="kpi-label">Found in Custody</span>
+              <div class="kpi-icon-wrapper">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-value" id="kpi-total-found">0</span>
+              <span class="metric-sub-tag">Vault Intake Items</span>
+            </div>
+          </div>
+
+          <div class="kpi-card" data-type="resolved">
+            <div class="metric-top-row">
+              <span class="kpi-label">Reunited Items</span>
+              <div class="kpi-icon-wrapper">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              </div>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-value" id="kpi-total-recovered">0</span>
+              <span class="metric-sub-tag">Returned to Owner</span>
+            </div>
+          </div>
+
+          <div class="kpi-card" data-type="pending">
+            <div class="metric-top-row">
+              <span class="kpi-label">Pending Claims</span>
+              <div class="kpi-icon-wrapper">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-value" id="kpi-pending-claims">0</span>
+              <span class="metric-sub-tag">Awaiting Review</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Lost vs. Found Reports by Campus Building</h3>
+              <div class="chart-legend">
+                <span class="legend-item"><span class="legend-dot dot-lost"></span> Lost</span>
+                <span class="legend-item"><span class="legend-dot dot-found"></span> Found</span>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chart-locations"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Distribution by Category</h3>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chart-categories"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Claims Moderation Table Section -->
+        <div class="admin-card-section">
+          <div class="admin-card-header">
+            <div class="admin-card-title-group">
+              <h3>Claim Verifications &amp; Custody Authorizations</h3>
+              <p>Review student claims, check proof of ownership, and authorize item returns.</p>
+            </div>
+          </div>
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Claimant</th>
+                  <th>Proof of Ownership</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-claims-tbody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- All Items Moderation Section -->
+        <div class="admin-card-section">
+          <div class="admin-card-header">
+            <div class="admin-card-title-group">
+              <h3>All Campus Listings Management</h3>
+              <p>Filter by status, search items, and manage reports across campus.</p>
+            </div>
+            <div class="d-flex gap-2">
+              <select class="filter-select" onchange="Admin.setFilter(this.value)">
+                <option value="all">All Statuses</option>
+                <option value="open">Open</option>
+                <option value="claimed">Claimed</option>
+                <option value="recovered">Recovered</option>
+                <option value="lost">Type: Lost</option>
+                <option value="found">Type: Found</option>
+              </select>
+              <input type="text" class="form-control" style="width: 200px; padding: 0.35rem 0.6rem; font-size: 0.85rem;" placeholder="Filter items..." oninput="Admin.setSearch(this.value)" />
+            </div>
+          </div>
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Item Title</th>
+                  <th>Type</th>
+                  <th>Campus Location</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-items-tbody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- User Accounts Section -->
+        <div class="admin-card-section">
+          <div class="admin-card-header">
+            <div class="admin-card-title-group">
+              <h3>Registered Campus Members</h3>
+              <p>Overview of active student and staff accounts.</p>
+            </div>
+          </div>
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Department / School</th>
+                  <th>Reports</th>
+                  <th>Claims</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-tbody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       MODAL 1: Detailed Item View (With Location Update Suggestions & Timeline)
+       ========================================================================== -->
+  <div id="modal-item-detail" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-item-title">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-item-title">Item Details</h3>
+        <button class="modal-close-btn" onclick="App.closeModal('modal-item-detail')" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-media-frame">
+          <img id="modal-item-img" src="" alt="Item" class="modal-item-hero-img" />
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mb-3 mt-3">
+          <span id="modal-item-badge" class="badge">LOST</span>
+          <span id="modal-item-category" class="badge badge-secondary">Electronics</span>
+        </div>
+
+        <div class="modal-details-grid">
+          <div class="modal-detail-item">
+            <span class="modal-detail-label">Campus Location</span>
+            <span class="modal-detail-value" id="modal-item-location">Central Library</span>
+            <span class="text-xs text-muted" id="modal-item-specific-loc"></span>
+          </div>
+          <div class="modal-detail-item">
+            <span class="modal-detail-label">Date Reported</span>
+            <span class="modal-detail-value" id="modal-item-date">Nov 10, 2026</span>
+          </div>
+          <div class="modal-detail-item">
+            <span class="modal-detail-label">Reported By</span>
+            <span class="modal-detail-value" id="modal-item-reporter-name">Rohan Verma</span>
+            <span class="text-xs text-muted" id="modal-item-reporter-email">rohan@saiuniversity.edu.in</span>
+          </div>
+        </div>
+
+        <!-- Suggest Location Update Callout -->
+        <div class="location-update-action-box">
+          <div class="loc-box-info">
+            <strong>Has this item moved?</strong>
+            <p class="text-xs text-muted">If you moved this item to security, reception, or noticed it in a new location, propose an update.</p>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" id="modal-suggest-loc-btn">
+            📍 Suggest Location Update
+          </button>
+        </div>
+
+        <!-- Location Update Suggestions History Timeline -->
+        <div id="modal-location-history-section" class="location-history-section hidden">
+          <h4 class="loc-history-title">Location Update History</h4>
+          <div class="loc-history-list" id="modal-location-history-list">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <div class="mb-3 mt-3">
+          <span class="modal-detail-label">Full Description &amp; Details</span>
+          <p id="modal-item-desc" class="modal-item-desc-text"></p>
+        </div>
+
+        <!-- Similar Items Section -->
+        <div id="modal-similar-section" class="similar-items-section hidden">
+          <div class="similar-section-header">
+            <h4>Correlating Campus Reports</h4>
+          </div>
+          <p class="text-xs text-muted mb-2">Cross-referenced reports matching item category or location:</p>
+          <div class="similar-items-grid" id="modal-similar-items">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline btn-sm" onclick="App.closeModal('modal-item-detail')">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" id="modal-item-claim-btn">
+          Claim Item
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 2: Suggest Location Update (Student Community Collaboration)
+       ========================================================================== -->
+  <div id="modal-suggest-location" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="suggest-loc-headline">
+    <div class="modal-container" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="suggest-loc-headline">Suggest Location Update</h3>
+        <button class="modal-close-btn" onclick="App.closeModal('modal-suggest-location')" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="suggest-location-form">
+        <div class="modal-body">
+          <input type="hidden" id="suggest-loc-item-id" />
+
+          <!-- Context of Current Item -->
+          <div class="p-3 mb-3 current-item-context-box">
+            <div class="text-xs text-muted">REPORTED ITEM</div>
+            <div class="fw-bold" id="suggest-loc-item-title">Item Title</div>
+            <div class="text-xs text-muted mt-1">
+              Current Location: <strong id="suggest-loc-current">Central Library</strong>
+            </div>
+          </div>
+
+          <p class="text-xs text-muted mb-3">
+            Your suggestion will be recorded as a pending community update and displayed on the item's timeline. Campus Security or the original reporter can verify and apply it.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="suggest-new-location">New Campus Location *</label>
+            <select id="suggest-new-location" class="form-control" required>
+              <option value="">-- Choose New Campus Location --</option>
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="suggest-specific-spot">Specific Spot or Room (Optional)</label>
+            <input type="text" id="suggest-specific-spot" class="form-control" placeholder="e.g. Handed over to Security Desk G-04, Left at Library Reception" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="suggest-note">Note / Context for Security &amp; Owner</label>
+            <textarea id="suggest-note" class="form-control" rows="3" placeholder="e.g. I saw someone move this item to the front desk at 2:00 PM today..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" onclick="App.closeModal('modal-suggest-location')">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            Submit Location Suggestion
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 3: Submit Ownership Claim Form
+       ========================================================================== -->
+  <div id="modal-claim" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="claim-modal-title">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title" id="claim-modal-title">Submit Ownership Claim</h3>
+        <button class="modal-close-btn" onclick="App.closeModal('modal-claim')" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="claim-form">
+        <div class="modal-body">
+          <input type="hidden" id="claim-item-id" />
+
+          <div class="p-3 mb-3 current-item-context-box">
+            <div class="fw-bold" id="claim-item-title-display">Item Title</div>
+            <div class="text-xs text-muted" id="claim-item-loc-display">Location</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="claim-name">Your Full Name *</label>
+            <input type="text" id="claim-name" class="form-control" required readonly />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="claim-email">University Email *</label>
+              <input type="email" id="claim-email" class="form-control" required readonly />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="claim-phone">Contact Phone Number *</label>
+              <input type="tel" id="claim-phone" class="form-control" placeholder="+91 98400 00000" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="claim-proof">Proof of Ownership / Distinct Identifying Details *</label>
+            <textarea id="claim-proof" class="form-control" rows="4" placeholder="Describe unique identifying marks (e.g., serial number, device wallpaper, stickers, case marks, unlock passcode, purchase invoice) that prove this item belongs to you..." required></textarea>
+            <span class="text-xs text-muted mt-1 d-block">Campus Security will verify these details before authorizing item pickup at Pavilion Desk G-04.</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" onclick="App.closeModal('modal-claim')">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            Submit Claim
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 4: Edit Listing Form
+       ========================================================================== -->
+  <div id="modal-edit-item" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title" id="edit-modal-title">Edit Listing Details</h3>
+        <button class="modal-close-btn" onclick="App.closeModal('modal-edit-item')" aria-label="Close dialog">&times;</button>
+      </div>
+      <form onsubmit="event.preventDefault(); App.handleEditSubmit();">
+        <div class="modal-body">
+          <input type="hidden" id="edit-item-id" />
+          <div class="form-group">
+            <label class="form-label" for="edit-title">Item Title *</label>
+            <input type="text" id="edit-title" class="form-control" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="edit-category">Category *</label>
+              <select id="edit-category" class="form-control" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="edit-location">Campus Building *</label>
+              <select id="edit-location" class="form-control" required></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-specific-loc">Specific Spot</label>
+            <input type="text" id="edit-specific-loc" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-description">Description *</label>
+            <textarea id="edit-description" class="form-control" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" onclick="App.closeModal('modal-edit-item')">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            Save Updates
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 5: Authentication (Sign In & Register)
+       ========================================================================== -->
+  <div id="modal-auth" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="modal-container" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="d-flex gap-2">
+          <button id="auth-tab-login" class="btn btn-sm btn-outline active" onclick="App.switchAuthTab('login')">Sign In</button>
+          <button id="auth-tab-register" class="btn btn-sm btn-outline" onclick="App.switchAuthTab('register')">Register</button>
+        </div>
+        <button class="modal-close-btn" onclick="App.closeModal('modal-auth')" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Quick Switcher Demo Buttons -->
+        <div class="mb-3 p-3 demo-auth-box">
+          <div class="fw-bold text-xs mb-2" style="color: var(--primary);">ONE-CLICK DEMO SIGN IN:</div>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-xs btn-primary flex-1" onclick="App.handleQuickLogin('student')">
+              Student Demo
+            </button>
+            <button type="button" class="btn btn-xs btn-outline flex-1" onclick="App.handleQuickLogin('admin')">
+              Admin Demo
+            </button>
+          </div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="form-login">
+          <div class="form-group">
+            <label class="form-label" for="login-email">University Email</label>
+            <input type="email" id="login-email" class="form-control" placeholder="name@saiuniversity.edu.in" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="width: 100%;">Sign In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="form-register" class="hidden">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Full Name *</label>
+            <input type="text" id="reg-name" class="form-control" placeholder="Your Name" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="reg-email">University Email *</label>
+              <input type="email" id="reg-email" class="form-control" placeholder="name@saiuniversity.edu.in" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-id">Student ID *</label>
+              <input type="text" id="reg-id" class="form-control" placeholder="SAI2024..." required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-dept">School / Department</label>
+            <input type="text" id="reg-dept" class="form-control" placeholder="e.g. School of Computing &amp; Data Science" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="reg-phone">Phone Number</label>
+              <input type="tel" id="reg-phone" class="form-control" placeholder="+91 98400 00000" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-password">Password *</label>
+              <input type="password" id="reg-password" class="form-control" placeholder="••••••••" required />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="width: 100%;">Create Student Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Area -->
+  <div id="toast-area" class="toast-container" aria-live="polite"></div>
+
+  <!-- ==========================================================================
+       Master University Footer: Editorial Grid & Creator Seal
+       ========================================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Col 1: Portal Overview -->
+        <div class="footer-col">
+          <div class="brand-wrapper mb-2">
+            <div class="brand-logo-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                <path d="M11 8v6"></path>
+                <path d="M8 11h6"></path>
+              </svg>
+            </div>
+            <div class="brand-text-block">
+              <span class="brand-title">InSearch</span>
+              <span class="brand-subtitle">Sai University</span>
+            </div>
+          </div>
+          <p class="footer-brand-summary">
+            Official central intake, physical custody registry, and claim clearance network for Sai University students, faculty, and administrative staff.
+          </p>
+        </div>
+
+        <!-- Col 2: Campus & Custody Desk -->
+        <div class="footer-col">
+          <h4>Campus &amp; Custody Desk</h4>
+          <div class="footer-address-list">
+            <div class="footer-address-item">
+              <strong>Sai University (SaiU)</strong>
+              <span>One Hub Chennai, OMR Road, Paiyanur, Chengalpattu District, Tamil Nadu — 603 104, India.</span>
+            </div>
+            <div class="footer-address-item">
+              <strong>Physical Handover Point</strong>
+              <span>Central Academic Pavilion, Ground Floor, Security Command G-04 (Mon–Sat: 8:30 AM – 6:30 PM)</span>
+            </div>
+            <div class="footer-address-item">
+              <strong>Lost &amp; Found Office</strong>
+              <span><a href="mailto:lostandfound@saiuniversity.edu.in" style="color: var(--primary-accent);">lostandfound@saiuniversity.edu.in</a></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 3: Portal Directory -->
+        <div class="footer-col">
+          <h4>Portal Directory</h4>
+          <ul class="footer-links-list">
+            <li><a href="#browse" onclick="App.navigateTo('browse'); return false;">Browse Campus Catalog</a></li>
+            <li><a href="#report" onclick="App.navigateTo('report'); return false;">Report an Item</a></li>
+            <li><a href="#dashboard" onclick="App.navigateTo('dashboard'); return false;">My Student Claims</a></li>
+            <li><a href="#admin" onclick="App.handleQuickLogin('admin', 'admin'); return false;">Campus Admin Console</a></li>
+            <li><a href="https://saiuniversity.edu.in" target="_blank" rel="noopener">Sai University Official Site</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Creator Card (AKSHAYA) - Tactile Architectural Seal -->
+        <div class="footer-col">
+          <h4>Created By</h4>
+          <div class="footer-creator-card">
+            <div class="creator-avatar-seal">A</div>
+            <div class="creator-details">
+              <span class="creator-label">Designed &amp; Developed by</span>
+              <h5 class="creator-name">Akshaya</h5>
+              <span class="creator-sub">Sai University</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dignified Sub-Footer Bottom Bar -->
+      <div class="footer-bottom-bar">
+        <div class="footer-copy">
+          &copy; 2026 <strong>Sai University</strong>. InSearch Campus Lost &amp; Found System. All rights reserved.
+        </div>
+        <div>
+          Designed &amp; Developed by <strong>Akshaya</strong> &bull; Sai University
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts in Proper Dependency Order -->
+  <script src="js/api.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/sample-data.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/duplicate-detector.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Initialize default date picker to today
+    document.addEventListener("DOMContentLoaded", () => {
+      const dateField = document.getElementById("report-date");
+      if (dateField && !dateField.value) {
+        dateField.value = new Date().toISOString().split("T")[0];
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,517 @@
+/* ==========================================================================
+   InSearch — Campus Lost and Found Portal for Sai University
+   Admin Console: High-Fashion Editorial & Brutalist Ledger System
+   Aesthetic: Pacome Pertant / Snog Productions / Meech213
+   ========================================================================== */
+
+.admin-section {
+  padding: 2.5rem 0 6rem 0;
+  background: transparent;
+}
+
+/* ==========================================================================
+   1. Masthead / Canopy Header (Stark Editorial Spread)
+   ========================================================================== */
+.admin-canopy-banner {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  box-shadow: none;
+  margin-bottom: 3.5rem;
+  overflow: hidden;
+}
+
+.admin-canopy-overlay {
+  display: none; /* Strip out dark generic gradients */
+}
+
+.admin-canopy-content {
+  position: relative;
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background: transparent;
+}
+
+.canopy-top-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.canopy-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--text-main);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.canopy-beacon {
+  width: 6px;
+  height: 6px;
+  border-radius: 0;
+  background: var(--text-main);
+  box-shadow: none;
+}
+
+.canopy-coord {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.admin-canopy-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.admin-header-title h2 {
+  font-family: var(--font-display, 'Bricolage Grotesque', sans-serif);
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.admin-header-title p {
+  color: var(--text-secondary);
+  font-family: var(--font-sans, sans-serif);
+  font-size: 1rem;
+  margin-top: 1rem;
+  max-width: 58ch;
+  line-height: 1.5;
+}
+
+.canopy-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.canopy-actions .studio-btn-ghost,
+.canopy-actions .btn-outline {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1.4rem;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  color: var(--text-main);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.canopy-actions .studio-btn-ghost:hover,
+.canopy-actions .btn-outline:hover {
+  background: var(--text-main);
+  color: var(--bg-main);
+  border-color: var(--text-main);
+}
+
+.canopy-actions .studio-btn-primary,
+.canopy-actions .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1.4rem;
+  background: var(--text-main);
+  color: var(--bg-main);
+  border: 1px solid var(--text-main);
+  border-radius: 0;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.canopy-actions .studio-btn-primary:hover,
+.canopy-actions .btn-primary:hover {
+  background: transparent;
+  color: var(--text-main);
+  border-color: var(--text-main);
+}
+
+/* ==========================================================================
+   2. Numbered Metric Grid (Raw Swiss Editorial Ledger)
+   ========================================================================== */
+.kpi-grid,
+.studio-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 4rem;
+}
+
+.kpi-card,
+.studio-metric-card {
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border-color);
+  border-radius: 0;
+  padding: 1.75rem 1.5rem;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 140px;
+  transition: background-color 0.2s;
+}
+
+.kpi-grid > *:first-child,
+.studio-kpi-grid > *:first-child {
+  border-left: 1px solid var(--border-color);
+}
+
+.kpi-card:hover,
+.studio-metric-card:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  transform: none;
+  box-shadow: none;
+}
+
+.metric-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.kpi-label {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.kpi-icon-wrapper {
+  display: none; /* Remove childish colored icon bubbles */
+}
+
+.kpi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-value {
+  font-family: var(--font-display, 'Bricolage Grotesque', sans-serif);
+  font-size: clamp(2.5rem, 3.8vw, 3.5rem);
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.5rem;
+}
+
+.metric-sub-tag {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   3. Analytics Charts Grid
+   ========================================================================== */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  padding: 2rem;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chart-title {
+  font-family: var(--font-display, 'Bricolage Grotesque', sans-serif);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 0;
+}
+
+.dot-lost {
+  background-color: var(--text-main);
+}
+
+.dot-found {
+  background-color: var(--text-muted);
+}
+
+.chart-canvas-container {
+  position: relative;
+  width: 100%;
+  height: 260px;
+}
+
+/* ==========================================================================
+   4. Moderation Ledger & Registry Table
+   ========================================================================== */
+.admin-card-section {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  margin-bottom: 4rem;
+}
+
+.admin-card-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-card-title-group h3 {
+  font-family: var(--font-display, 'Bricolage Grotesque', sans-serif);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.admin-card-title-group p {
+  color: var(--text-muted);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 0.4rem;
+}
+
+.admin-table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: var(--bg-card);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.admin-table thead th {
+  background: var(--bg-secondary);
+  padding: 1rem 1.25rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.admin-table tbody td {
+  padding: 1.15rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.admin-table tbody tr:hover {
+  background-color: var(--bg-secondary);
+}
+
+.admin-item-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 0;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  display: block;
+}
+
+.avatar-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 0;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  display: block;
+}
+
+.claim-proof-snippet {
+  display: inline-block;
+  max-width: 260px;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-actions button {
+  padding: 0.45rem 0.85rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 0;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.table-actions button:hover {
+  background: var(--text-main);
+  color: var(--bg-main);
+  border-color: var(--text-main);
+}
+
+/* ==========================================================================
+   5. Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .kpi-grid,
+  .studio-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-canopy-content {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .admin-section {
+    padding: 1.5rem 0 4rem;
+  }
+
+  .admin-canopy-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .canopy-actions {
+    width: 100%;
+  }
+
+  .kpi-grid,
+  .studio-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .kpi-value {
+    font-size: 2.2rem;
+  }
+}
