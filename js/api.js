@@ -18,11 +18,20 @@
   const USER_STORAGE_KEY = 'insearch_current_user_v1';
 
   // 2. Base URL resolution
+  // In production (e.g. Render), use same-origin (window.location.origin).
+  // In local development, if running via Live Server / dev server (port 5500, 3000, etc.), point to http://localhost:5000.
+  // If running directly through Express on localhost:5000, window.location.origin is already http://localhost:5000.
+  const isLocalDevServer = typeof window.location !== 'undefined' && window.location &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+    window.location.port !== '5000';
+
   const API_BASE_URL = (
     window.INSEARCH_API_BASE_URL ||
-    (typeof window.location !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    (isLocalDevServer
       ? 'http://localhost:5000'
-      : 'http://localhost:5000')
+      : (typeof window.location !== 'undefined' && window.location.origin
+          ? window.location.origin
+          : 'http://localhost:5000'))
   ).replace(/\/+$/, '');
 
   // Category fallback images for broken or missing images
@@ -142,7 +151,7 @@
         response = await fetch(url, fetchOptions);
       } catch (networkError) {
         throw new ApiError(
-          'Unable to connect to InSearch server. Please verify backend is running on port 5000.',
+          'Unable to connect to InSearch server. Please check your network connection or verify backend service status.',
           0,
           { networkError: true, originalMessage: networkError.message }
         );

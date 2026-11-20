@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const dotenv = require('dotenv');
 
 // 1. Load environment variables from .env file
@@ -12,21 +13,70 @@ const { connectDB, getDBStatus } = require('./config/db');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 2. Security Middleware (Helmet)
+// Resolve frontend root directory (containing index.html, css/, js/, sai-uni-img.jpg)
+const candidatePath = path.resolve(__dirname, '..');
+const frontendPath = fs.existsSync(path.join(candidatePath, 'index.html'))
+  ? candidatePath
+  : process.cwd();
+
+// 2. Security Middleware (Helmet with Explicit, Tailored Content Security Policy)
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      imgSrc: ["'self'", "data:", "https://images.unsplash.com", "blob:"],
+      connectSrc: [
+        "'self'",
+        "http://localhost:5000",
+        "http://127.0.0.1:5000",
+        "https://insearch-backend.onrender.com",
+        "https://*.onrender.com"
+      ],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+      frameAncestors: ["'none'"]
+    }
+  }
 }));
 
-// 3. CORS Configuration for local frontend development
+// 3. CORS Configuration for local frontend development and production
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
-  : ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://localhost:3000', 'http://localhost:5000'];
+  : [
+      'http://127.0.0.1:5500',
+      'http://localhost:5500',
+      'http://localhost:3000',
+      'http://localhost:5000',
+      'https://insearch-backend.onrender.com'
+    ];
+
+if (process.env.RENDER_EXTERNAL_URL && !allowedOrigins.includes(process.env.RENDER_EXTERNAL_URL)) {
+  allowedOrigins.push(process.env.RENDER_EXTERNAL_URL);
+}
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, Postman)
+    // Allow requests with no origin (like mobile apps, curl, Postman, same-origin)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+    let hostname = '';
+    try {
+      hostname = new URL(origin).hostname;
+    } catch (e) {
+      hostname = '';
+    }
+    if (
+      allowedOrigins.indexOf(origin) !== -1 ||
+      process.env.NODE_ENV === 'development' ||
+      hostname.endsWith('.onrender.com') ||
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1'
+    ) {
       return callback(null, true);
     }
     return callback(new Error('CORS policy: Access denied for this origin.'));
@@ -57,15 +107,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Root welcome route
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to InSearch API — Sai University Lost & Found Portal',
-    healthCheck: '/api/health',
-    version: '1.0.0'
-  });
-});
-
 // 6. API Route Handlers
 const authRoutes = require('./routes/authRoutes');
 const itemRoutes = require('./routes/itemRoutes');
@@ -79,8 +120,57 @@ app.use('/api/claims', claimRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', userRoutes);
 
-// 7. 404 Handler for undefined routes
+// 7. Security Guard: Block direct HTTP access to server source code, environment/config files,
+// dependencies, version control, and temporary scratch tools BEFORE static serving.
+const BLOCKED_PATH_PATTERNS = [
+  /^\/server(\/.*)?$/i,
+  /^\/scratch(\/.*)?$/i,
+  /^\/node_modules(\/.*)?$/i,
+  /^\/\.git(\/.*)?$/i,
+  /\.(env|example|json|log|md|gitignore|lock|ya?ml|config)$/i,
+  /package.*\.json$/i,
+  /\.env.*/i
+];
+
 app.use((req, res, next) => {
+  // Allow standard API requests through
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+
+  const normalizedPath = decodeURIComponent(req.path).trim();
+  for (const pattern of BLOCKED_PATH_PATTERNS) {
+    if (pattern.test(normalizedPath)) {
+      return res.status(404).json({
+        error: 'Route Not Found',
+        path: req.originalUrl
+      });
+    }
+  }
+  next();
+});
+
+// 8. Serve Frontend Static Assets (css, js, images, etc.) from repository root
+app.use(express.static(frontendPath, {
+  dotfiles: 'ignore',
+  index: false
+}));
+
+// Root route: Serve frontend index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// Client-side routing fallback: Serve index.html for non-API GET requests
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// 9. 404 Handler for undefined API routes and non-GET requests
+app.use((req, res) => {
   res.status(404).json({
     error: 'Route Not Found',
     path: req.originalUrl,
@@ -88,7 +178,7 @@ app.use((req, res, next) => {
   });
 });
 
-// 8. Global Error Handler
+// 10. Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Unhandled Server Error:', err.message);
   res.status(err.status || 500).json({
@@ -97,7 +187,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 8. Connect to Database & Start HTTP Server
+// 11. Connect to Database & Start HTTP Server
 const startServer = async () => {
   // Connect to MongoDB
   await connectDB();
@@ -107,6 +197,7 @@ const startServer = async () => {
     console.log(`====================================================`);
     console.log(`🚀 InSearch Server listening on http://localhost:${PORT}`);
     console.log(`📡 Health Check URL: http://localhost:${PORT}/api/health`);
+    console.log(`🌐 Frontend Root: ${frontendPath}`);
     console.log(`⚙️  Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`====================================================`);
   });
